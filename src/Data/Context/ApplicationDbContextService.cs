@@ -13,10 +13,16 @@ namespace Data.Context
 {
     public class ApplicationDbContextService : IDbContextService
     {
-        private readonly IDbConnection DbConnection;
+        private string _sqlConnectionString;
+
+        private IDbConnection DbConnection
+        {
+            get => new SqlConnection(_sqlConnectionString);
+            set { }
+        }
 
         public ApplicationDbContextService(string sqlConnection)
-            => DbConnection = new SqlConnection(sqlConnection);
+            => _sqlConnectionString = sqlConnection;
 
         public async Task<T> MakeFirstOrDefaultAsync<T>(string query, object? param = null)
         {

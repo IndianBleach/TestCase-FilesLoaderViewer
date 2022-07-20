@@ -9,20 +9,16 @@ using System.Threading.Tasks;
 
 namespace Data.Context
 {
-    public static class DatabaseEnsureCreated
+    public static class ApplicationContextSeed
     {
-        public static async Task CreateDbWithValuesAsync(IDbContextService dbService)
+        public static async Task SeedDatabaseAsync(IDbContextService dbService)
         {
             int? dbExist = await dbService.MakeFirstOrDefaultAsync<int>
-            ("select count(*) from master.dbo.sysdatabases where name = 'FileX'");
+            ("SELECT count(*) FROM Sys.Tables");
 
             if (!dbExist.HasValue || dbExist.Value == 0)
             {
-                await dbService.ExecuteAsync("create database FileX");
-
                 string query = @"
-                use FileX;
-                    
                 create table Files 
                 (
                     Id nvarchar(200) primary key,

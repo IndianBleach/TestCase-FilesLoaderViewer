@@ -37,8 +37,7 @@ namespace Application.Services
 
         public async Task<DownloadFileDto?> GetFileByIdOrNullAsync(string fileId)
         {
-            string selectQuery = @"
-                use FileX; 
+            string selectQuery = @"                
                 select CONCAT(Files.Path, Files.Name) as FullPath, Type from Files
                     where Files.Id = @fileId";
 
@@ -53,11 +52,13 @@ namespace Application.Services
 
         public async Task<DownloadFileDto?> GetFileByLinkOrNullAsync(string link)
         {
-            string selectQuery = @"
-                use FileX; 
+            string selectQuery = @"                
                 select CONCAT(Files.Path, Files.Name) as FullPath, Type from FileLinks
                     inner join Files on Files.Id = FileLinks.FileId
-                    where FileLinks.Link = @link";
+                    where FileLinks.Link = @link;
+
+                delete FileLinks
+                where FileLinks.Link = @link";
 
             DownloadFileDto? file = await _ctx
                 .MakeFirstOrDefaultAsync<DownloadFileDto?>(selectQuery, new { link });
@@ -71,7 +72,7 @@ namespace Application.Services
 
         public async Task<ICollection<FileDto>> GetAllAsync()
         {
-            string selectQuery = @"use FileX; select id, name, path, size, type from Files";
+            string selectQuery = @"select id, name, path, size, type from Files";
 
             IEnumerable<FileDto> files = await _ctx.MakeQueryAsync<FileDto>(selectQuery);
 
@@ -106,7 +107,7 @@ namespace Application.Services
             using FileStream fileStream = new(_webPath + path + file.FileName, FileMode.Create);
             await file.CopyToAsync(fileStream);
 
-            string insertQuery = @"use FileX; insert into Files values(@id, @name, @url, @size, @type)";
+            string insertQuery = @"insert into Files values(@id, @name, @url, @size, @type)";
 
             FileInfo info = new(_webPath + path + file.FileName);
 

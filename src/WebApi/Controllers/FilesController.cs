@@ -1,5 +1,6 @@
 ﻿using Core.DTOs;
 using Core.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -61,11 +62,12 @@ namespace WebApi.Controllers
 
         [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = long.MaxValue)]
         [HttpPost("upload")]
+        [Produces("application/json")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             FileDto? fileDto = await _fileService.UploadAsync(file);
 
-            if (fileDto != null) return Ok(fileDto);
+            if (fileDto != null) return Json(fileDto);
 
             return BadRequest(HttpStatusCode.BadRequest);
         }

@@ -5,6 +5,6 @@ namespace WebApi.Controllers.Common
 {
     [ApiController]
     [Route("api/[controller]")]
-    public abstract class ApiController : ControllerBase
+    public abstract class ApiController : Controller
     { }
 }

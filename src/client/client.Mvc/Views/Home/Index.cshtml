@@ -1,0 +1,107 @@
+﻿@model ICollection<FileModel>;
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="mt-5 mb-5 d-flex justify-content-center">
+      <div class="">
+        <form
+          id="uploadForm"
+          asp-antiforgery="true"
+          enctype="multipart/form-data"
+        >
+          <input type="file" multiple />
+          <button class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+    <div class="mb-5 d-flex justify-content-center">
+      <div id="fileLoadingContainer" class="col-6 text-center">
+      </div>
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <div class="container d-flex flex-wrap">
+        @foreach (var item in Model)
+        {
+            <div class="col-4 p-2">
+              <div class="file_card" style="border-radius: 16px;">
+                <h5>@item.Name</h5>
+                <label>Каталог: @item.Path</label>
+                <br />
+                <label>Тип: @item.Type</label>
+                <br />
+                <a href="https://localhost:7145/api/files/download/@item.Id"
+                  >Скачать</a
+                >
+                <br />
+                <button
+              data-file="@item.Id"
+              style="border: none;"
+              class="makeLinkBtn btn text-white p-0 bg-transparent"
+            >
+              Сделать ссылку
+            </button>
+            <br>
+                <a data-filelink="@item.Id"></a>
+              </div>
+            </div>
+        }
+      </div>
+    </div>
+
+
+@section Scripts
+{
+    <script>
+
+    $(".makeLinkBtn").on("click", (e) => {
+        let file = e.target.dataset.file;
+        console.log(e.target);
+        $.get("https://localhost:7145/api/files/getlink?file=" + file, res => {
+            console.log(res);
+            if (res != '') {
+                $(`a[data-filelink='${file}']`).text(res).attr("href", res);
+            }
+        })
+    })
+
+    const addFileToLoading = (filename) => {
+        $("#fileLoadingContainer").append(`<div class="file_loading"><label>${filename}</label> - <label data-loadingname='${filename}'>Загружается...</label></div>`);
+    }
+
+    const updateFileLoadingStatus = (filename) => { 
+        $(`label[data-loadingname='${filename}']`)
+            .val("Загружен")
+            .addClass("text-success");
+    }
+
+    $("#uploadForm").on("submit", (e) => {
+        e.preventDefault();
+
+        let files = e.target.getElementsByTagName("input")[0].files;        
+
+        for (i = 0; i < files.length; i++) {
+
+            addFileToLoading(files[i].name);
+            
+            var data = new FormData()
+            data.append('file', files[i])
+
+            fetch('https://localhost:7145/api/files/upload',
+            {
+                method: "post",
+                body: data                
+            })
+                .then(res => {                    
+                    res.json().then((json) => {
+                        console.log(json);
+                        if (json.id != '') { 
+                            updateFileLoadingStatus(json.name)
+                        }
+                    });                    
+                });
+        }
+    });
+
+    </script>
+}
