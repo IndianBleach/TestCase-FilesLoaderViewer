@@ -12,11 +12,8 @@ https://localhost:7145/api/files/all
 https://localhost:7145/api/files/upload
 ```
 *Method: POST*                                                                                                                                                        
-
 *Body: {file}*                                                                                                                                                        
-
 *form-data*                                                                                                                                                             
-
 Файл передаётся через body, название в body обязательно должно быть file, тип: form-data
 
 
