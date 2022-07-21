@@ -8,8 +8,8 @@ https://localhost:7145/api/files/all
 #### Загрузить файл
 ```
 https://localhost:7145/api/files/upload
-[![Alt-текст](https://imgur.com/a/TgxIbbu "upload")]
 ```
+![Alt-текст](https://imgur.com/a/TgxIbbu "upload")
 
 
 #### Скачать файл
