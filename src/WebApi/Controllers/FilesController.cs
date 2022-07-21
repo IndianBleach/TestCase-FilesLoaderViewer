@@ -1,15 +1,17 @@
-﻿using Core.DTOs;
+﻿using Application.Models;
+using Core.DTOs;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 using WebApi.Controllers.Common;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController]    
     public class FilesController : ApiController
     {
         private readonly IFileService _fileService;
@@ -30,22 +32,25 @@ namespace WebApi.Controllers
             if (file != null) 
                 return PhysicalFile(file.FullPath, file.Type);
 
-            else return BadRequest(HttpStatusCode.NotFound);
+            else return BadRequest(ApiResult<DownloadFileDto>
+                .Failed(file, new List<string>() { "File not found"}));
             
         }
 
-        [HttpGet("getlink")]
+        [HttpPost("getlink")]
         public async Task<IActionResult> GetFileLink([FromQuery]string? file)
         {
             string? res = await _linkService.CreateFileLinkOrDefaultAsync(file);
 
             if (string.IsNullOrEmpty(res)) 
-                return BadRequest(HttpStatusCode.BadRequest);
+                return BadRequest(ApiResult<string>
+                .Failed(res, new List<string>() { "File not found", "Something went wrong" }));
 
-            else return Ok(res);
+            else return Ok(ApiResult<string>
+                .SuccessOk(res));
         }
 
-        [HttpGet("l/{fileLink}")]
+        [HttpGet("l/{fileLink}")]        
         public async Task<IActionResult> DownloadByLink([FromRoute] string fileLink)
         {
             DownloadFileDto? file = await _fileService.GetFileByLinkOrNullAsync(fileLink);
@@ -53,23 +58,28 @@ namespace WebApi.Controllers
             if (file != null) 
                 return PhysicalFile(file.FullPath, file.Type);
 
-            return BadRequest(HttpStatusCode.BadRequest);
+            return BadRequest(ApiResult<DownloadFileDto>
+                .Failed(file, new List<string>() { "Link is incorrect", "Link has been already used" }));
         }
 
         [HttpGet("all")]
         public async Task<IActionResult> ViewAll()
-            => Ok(await _fileService.GetAllAsync());
+            => Ok(ApiResult<ICollection<FileDto>>
+                .SuccessOk(await _fileService.GetAllAsync()));
 
-        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = long.MaxValue)]
         [HttpPost("upload")]
-        [Produces("application/json")]
-        public async Task<IActionResult> Upload(IFormFile file)
+        [RequestFormLimits(ValueLengthLimit = int.MaxValue, MultipartBodyLengthLimit = long.MaxValue)]
+        [DisableRequestSizeLimit]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Upload([FromForm]IFormFile file)
         {
             FileDto? fileDto = await _fileService.UploadAsync(file);
 
-            if (fileDto != null) return Json(fileDto);
+            if (fileDto != null) return Ok(ApiResult<FileDto>
+                .SuccessOk(fileDto));
 
-            return BadRequest(HttpStatusCode.BadRequest);
+            return BadRequest(ApiResult<FileDto>
+                .Failed(fileDto, new List<string>() { "Some errors with upload file", "Check file limit size or format" }));
         }
     }
 }

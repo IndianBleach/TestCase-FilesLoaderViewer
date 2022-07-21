@@ -11,14 +11,14 @@ builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), 
 
 builder.Services.AddControllers();
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.WithOrigins("https://localhost:7191", "https://localhost:7145");
-        });
-});
+//builder.Services.AddCors(options =>
+//{
+//    options.AddDefaultPolicy(
+//        policy =>
+//        {
+//            policy.WithOrigins("https://localhost:7191", "https://localhost:7145");
+//        });
+//});
 
 builder.Services.AddHealthChecks().AddTypeActivatedCheck<DbConnectionHealthCheck>(
         "test",
@@ -32,7 +32,7 @@ builder.Services.ConfigureServices(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseCors();
+//app.UseCors();
 
 app.ConfigureFilesDirectoryPath(builder.Environment.WebRootPath);
 
