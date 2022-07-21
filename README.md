@@ -14,7 +14,7 @@ https://localhost:7145/api/files/upload
 :white_check_mark: *Method: POST*
 :white_check_mark: *Body: {file}*
 :white_check_mark: *form-data*
-Файл передаётся через body, название параметра обязательно должно быть file, тип - form-data
+Файл передаётся через body, название в body обязательно должно быть file, тип: form-data
 
 
 #### Скачать файл
