@@ -14,3 +14,7 @@ https://localhost:7145/api/files/l/{уникальная часть ссылки
 ### Создать и получить одноразовую ссылку для файла
 https://localhost:7145/api/files/getlink?file={fileId}
 Пример: https://localhost:7145/api/files/getlink?file=40fa7d51-ef82-4fde-8b21-8b381b996fb5
+
+```
+Example
+```
