@@ -1,7 +1,9 @@
 # TestCase-FilesLoaderViewer
  
 ### Посмотреть все файлы
+```
 https://localhost:7145/api/files/all
+```
 
 ### Скачать файл
 https://localhost:7145/api/files/download/{fileId}
@@ -15,6 +17,4 @@ https://localhost:7145/api/files/l/{уникальная часть ссылки
 https://localhost:7145/api/files/getlink?file={fileId}
 Пример: https://localhost:7145/api/files/getlink?file=40fa7d51-ef82-4fde-8b21-8b381b996fb5
 
-```
-Example
-```
+
