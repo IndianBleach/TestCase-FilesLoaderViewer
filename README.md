@@ -11,9 +11,9 @@ https://localhost:7145/api/files/all
 ```
 https://localhost:7145/api/files/upload
 ```
-*Method: POST*
-*Body: {file}*
-*form-data*
+:white_check_mark: *Method: POST*
+:white_check_mark: *Body: {file}*
+:white_check_mark: *form-data*
 Файл передаётся через body, название параметра обязательно должно быть file, тип - form-data
 
 
